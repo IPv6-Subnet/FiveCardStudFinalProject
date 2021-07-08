@@ -3,6 +3,7 @@ package edu.wvup.pmetzger1;
 import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 
 
 /**
@@ -22,9 +23,9 @@ public class Player
     private JPanel cardPanel;
     private JLabel nameLabel;
     private JLabel stashLabel;
-    private JLabel scoreLabel;
+    //private JLabel scoreLabel;
 
-    private int score;
+    //private int score;
 
 
     /**
@@ -35,21 +36,21 @@ public class Player
         // initialise instance variables - A new ArrayList, set the name to "Player",
         name = "Player";
         stash =  0; // Include no money first
-        score = 0;
+        //score = 0;
         hand = new ArrayList<>();
         //stash = 500;
 
 
         nameLabel = new JLabel(name);
         stashLabel = new JLabel(stash.toString()); // pass integer or toString to get string
-        scoreLabel = new JLabel("0");// keep track of wins
-        alterScoreLabel();
+        //scoreLabel = new JLabel("0");// keep track of wins
+        //alterScoreLabel();
         setStash(500); // Set money to 500
 
         // Think of how I came up with this
         nameLabel.setForeground(FiveCardStud.foregroundColor);
         stashLabel.setForeground(FiveCardStud.foregroundColor);
-        scoreLabel.setForeground(FiveCardStud.foregroundColor);
+        //scoreLabel.setForeground(FiveCardStud.foregroundColor);
 
         cardPanel = new JPanel();
         cardPanel.setBackground(new Color(53, 101, 77));
@@ -57,7 +58,7 @@ public class Player
         // Fix code duplication
         nameLabel.setFont(FiveCardStud.fontSize);
         stashLabel.setFont(FiveCardStud.fontSize);
-        scoreLabel.setFont(FiveCardStud.fontSize);
+        //scoreLabel.setFont(FiveCardStud.fontSize);
     }
 
     /**
@@ -69,26 +70,26 @@ public class Player
         // stash
         this.name = name;
         this.stash = stash;
-        score = 0;
+        //score = 0;
         hand = new ArrayList<>();
 
 
         nameLabel = new JLabel(name); //@@@ Test @@@
         stashLabel = new JLabel(stash.toString()); // pass integer or toString to get string
-        scoreLabel = new JLabel("0");// keep track of wins @@ Test @@
-        alterScoreLabel();
+        //scoreLabel = new JLabel("0");// keep track of wins @@ Test @@
+        //alterScoreLabel();
         setStash(stash); //Check this
 
 
         nameLabel.setForeground(FiveCardStud.foregroundColor);
         stashLabel.setForeground(FiveCardStud.foregroundColor);
-        scoreLabel.setForeground(FiveCardStud.foregroundColor);
+        //scoreLabel.setForeground(FiveCardStud.foregroundColor);
 
         cardPanel = new JPanel();
         cardPanel.setBackground(new Color(53, 101, 77));
         nameLabel.setFont(FiveCardStud.fontSize);
         stashLabel.setFont(FiveCardStud.fontSize);
-        scoreLabel.setFont(FiveCardStud.fontSize);
+        //scoreLabel.setFont(FiveCardStud.fontSize);
     }
 
     /**
@@ -106,7 +107,7 @@ public class Player
      * @return The players hand.
      */
     // @@ TEST @@@
-    public ArrayList getHand()
+    public ArrayList<Card> getHand()
     {
         return hand;
     }
@@ -120,14 +121,6 @@ public class Player
         return stashLabel;
     }
 
-    /**
-     * Get the score label
-     * @return The label for the score
-     */
-    public JLabel getScoreLabel()
-    {
-        return scoreLabel;
-    }
 
     /**
      * Get the card panel
@@ -152,8 +145,8 @@ public class Player
         {
             card.show();
             //scoreLabel.setText(Integer.parseInt(scoreLabel.getText()) + card.getValue() + "");
-            score += card.getValue();
-            alterScoreLabel();
+            //score += card.getValue();
+            //alterScoreLabel();
         }
         else
         {
@@ -193,8 +186,8 @@ public class Player
         // Remove all of the cards from the hand
         hand.clear();
         cardPanel.removeAll();
-        score = 0;
-        alterScoreLabel();
+        //score = 0;
+        //alterScoreLabel();
     }
 
     /**
@@ -205,6 +198,8 @@ public class Player
      */
     public int scoreHand()
     {
+        Collections.sort(hand);
+
         // Call method
         return HandScore.valueHand(hand.toArray(new Card[0])); // Create anonymous object
 
@@ -237,15 +232,10 @@ public class Player
         return player;
     }
 
+
     /*
-     * Alters the score label
+    Provides the scoring for different Poker hands such as a flush, straight, etc.
      */
-    private void alterScoreLabel()
-    {
-        scoreLabel.setText("Hand Value: " + score);
-    }
-
-
     private static class HandScore
     {
         public static final int STRAIGHT_FLUSH = 8000000;

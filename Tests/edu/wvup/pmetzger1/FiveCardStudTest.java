@@ -135,18 +135,18 @@ public class FiveCardStudTest
     {
         // Arrange
         JButton betButton = game.getBetButton();
-        JButton hitButton = game.getHitButton();
-        JButton stayButton = game.getStayButton();
+        JButton checkButton = game.getCheckButton();
+        JButton foldButton = game.getFoldButton();
 
         // Act
         ActionListener[] betListener = betButton.getActionListeners();
-        ActionListener[] hitListener = hitButton.getActionListeners();
-        ActionListener[] stayListener = stayButton.getActionListeners();
+        ActionListener[] checkListener = checkButton.getActionListeners();
+        ActionListener[] foldListener = foldButton.getActionListeners();
 
         // Assert
         assertTrue(betListener.length > 0);
-        assertTrue(hitListener.length > 0);
-        assertTrue(stayListener.length > 0);
+        assertTrue(checkListener.length > 0);
+        assertTrue(foldListener.length > 0);
     }
 
     @Test
@@ -154,11 +154,17 @@ public class FiveCardStudTest
     {
         // Arrange
         Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 5, true, "5"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Jack"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 11, true, "King"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 12, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 13, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 14, true, "Queen"), true);
 
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Diamonds, 5, true, "5"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
         winner = game.checkWinner();
@@ -167,15 +173,22 @@ public class FiveCardStudTest
         assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
     }
 
+    // @@@@ When play again dialog opens, press OK, and the test will continue @@@
     @Test
     public void dealerDeclaredWinnerWithHighScoreTest()
     {
         // Arrange
         Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 10, true, "Jack"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 11, true, "King"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 12, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 13, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Spades, 14, true, "Queen"), true);
 
         game.getPlayer().receiveCard(new Card(Suit.Diamonds, 5, true, "5"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
@@ -183,6 +196,10 @@ public class FiveCardStudTest
 
         // Assert - Really ugly way to compare players
         assertTrue(winner.getNameLabel().getText().equals(game.getDealer().getNameLabel().getText()));
+
+
+
+
     }
 
     @Test
@@ -209,54 +226,6 @@ public class FiveCardStudTest
 
         assertNull(game.checkWinner());
     }
-
-    @Test
-    public void playerDeclaredWinnerWithDealerBustTest()
-    {
-        // Arrange
-        Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 5, true, "5"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
-
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
-
-        // Act
-        winner = game.checkWinner();
-
-        // Assert - Really ugly way to compare players
-        assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
-    }
-
-    @Test
-    public void dealerDeclaredWinnerWithPlayerBustTest()
-    {
-        // Arrange
-        Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 12, true, "King"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 12, true, "King"), true);
-        game.getDealer().receiveCard(new Card(Suit.Diamonds, 12, true, "King"), true);
-        game.getDealer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
-        game.getDealer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
-
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 5, true, "5"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 6, true, "6"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Clubs, 7, true, "7"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Clubs, 3, true, "3"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Clubs, 9, true, "9"), true);
-
-        // Act
-        winner = game.checkWinner();
-
-        // Assert - Really ugly way to compare players
-        assertTrue(winner.getNameLabel().getText().equals(game.getDealer().getNameLabel().getText()));
-    }
-
-
-
-
-
 
     @Test
     public void awardPotIfPlayerWinsTest()

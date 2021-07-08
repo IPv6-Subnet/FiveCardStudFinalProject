@@ -239,22 +239,6 @@ public class PlayerTest
         assertFalse(stashStartString.equals(stashEndString));
     }
 
-    @Test
-    public void playerScoreUpdateLabelTest()
-    {
-        // Arrange
-        Player p = new Player();
-        String scoreStartString;
-        String scoreEndString;
 
-        // Act
-        scoreStartString = p.getScoreLabel().getText();
-        p.receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        p.receiveCard(new Card(Suit.Diamonds, 10, true, "Queen"), true);
-        scoreEndString = p.getScoreLabel().getText();
-
-        // Assert
-        assertFalse(scoreStartString.equals(scoreEndString));
-    }
 }
 

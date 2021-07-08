@@ -29,8 +29,8 @@ public class FiveCardStud implements ActionListener
     private JButton betButton;
 
 
-    private JButton hitButton;
-    private JButton stayButton;
+    //private JButton hitButton;
+    //private JButton stayButton;
 
     //New
     private JButton checkButton;
@@ -114,21 +114,21 @@ public class FiveCardStud implements ActionListener
     }
 
     /**
-     * Get the hit button
-     * @return The user's hit button
+     * Get the check button
+     * @return The user's check button
      */
-    public JButton getHitButton()
+    public JButton getCheckButton()
     {
-        return hitButton;
+        return checkButton;
     }
 
     /**
-     * Get the stay button
-     * @return The user's stay button
+     * Get the fold button
+     * @return The user's fold button
      */
-    public JButton getStayButton()
+    public JButton getFoldButton()
     {
-        return stayButton;
+        return foldButton;
     }
 
     /**
@@ -202,6 +202,9 @@ public class FiveCardStud implements ActionListener
     public Player declareWinner()
     {
         if(player.getHand().size() == 5 && dealer.getHand().size() == 5) {
+            dealer.showCards();
+            frame.repaint(); // refresh cards
+
 
             Player winner = checkWinner();
             state = GameState.ENDED;
@@ -214,10 +217,7 @@ public class FiveCardStud implements ActionListener
                 return winner;
             }
         }
-
-
        return null;
-
     }
 
 
@@ -370,6 +370,9 @@ public class FiveCardStud implements ActionListener
         frame.repaint(); // TEST @@@
 
         state = GameState.START_GAME;
+        betButton.setEnabled(true);
+        foldButton.setEnabled(true);
+        checkButton.setEnabled(true);
      //   inProgress = true;
         //continueGame();
 
@@ -431,9 +434,16 @@ public class FiveCardStud implements ActionListener
                 }
             }
             else if(state == GameState.START_GAME) {
-                playersTurn();
-                dealersTurn();
-                declareWinner();
+                try {
+                    takeBet(betInput.getText()); // Already parsed
+                    playersTurn();
+                    dealersTurn();
+                    declareWinner();
+                } catch (IllegalBetException e) {
+                    // Include modal at some point @@@@ TEST @@@@@  --> Menu buttons
+                    e.printStackTrace();
+                }
+
             }
         }
         /*else if(event.getSource() == hitButton && state == GameState.DRAW)
@@ -545,8 +555,8 @@ public class FiveCardStud implements ActionListener
         westPanel.add(player.getNameLabel());
         westPanel.add(Box.createVerticalStrut(14));
         westPanel.add(player.getStashLabel());
-        westPanel.add(Box.createVerticalStrut(14));
-        westPanel.add(player.getScoreLabel());
+        //westPanel.add(Box.createVerticalStrut(14));
+        //westPanel.add(player.getScoreLabel());
         westPanel.add(Box.createGlue());
 
 
@@ -578,8 +588,8 @@ public class FiveCardStud implements ActionListener
         eastPanel.add(dealer.getNameLabel());
         eastPanel.add(Box.createVerticalStrut(14));
         eastPanel.add(dealer.getStashLabel());
-        eastPanel.add(Box.createVerticalStrut(14));
-        eastPanel.add(dealer.getScoreLabel());
+        //eastPanel.add(Box.createVerticalStrut(14));
+        //eastPanel.add(dealer.getScoreLabel());
         eastPanel.add(Box.createGlue());
 
 
@@ -771,8 +781,8 @@ public class FiveCardStud implements ActionListener
         }
         else
         {
-            hitButton.setEnabled(true);
-            stayButton.setEnabled(true);
+            //hitButton.setEnabled(true);
+            //stayButton.setEnabled(true);
             betButton.setEnabled(false);
         }
     }
@@ -790,33 +800,22 @@ public class FiveCardStud implements ActionListener
     }
 
     /*
-        Fold, where use will forfeit their hand for this round
+        When a player fold's they will forfeit their hand for the round
      */
     private void fold() {
-
-        updateLabels(dealer);
-        state = GameState.FOLD;
-        alterStatusLabel("Player has just folded!");
-        player.clearHand();
-        dealer.clearHand();
-        dealer.resetDeck();
-
-        hitButton.setEnabled(false);
-        stayButton.setEnabled(false);
         foldButton.setEnabled(false);
         checkButton.setEnabled(false);
         betButton.setEnabled(true);
 
+        state = GameState.FOLD;
+        alterStatusLabel("Player has just folded!");
+        updateLabels(dealer);
+
+
+
+
         frame.repaint();
 
-
-
-/*
-        if(state == Gamestate.FOLD)
-        {
-            JOptionPane.showMessageDialog(frame, "Player has folded. Would you like to play again?", "Play again?", JOptionPane.INFORMATION_MESSAGE);
-        }
-        */
     }
 
     /*

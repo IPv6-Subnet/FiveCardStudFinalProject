@@ -45,4 +45,17 @@ public class Dealer extends Player
         // Initialize the deck as a new instance of the Deck to reset it to 52 random cards again.
         deck = new Deck();
     }
+
+    /**
+     * Show the dealers cards
+     */
+    public void showCards()
+    {
+        getCardPanel().removeAll();
+        for(Card card : getHand())
+        {
+            card.show();
+            getCardPanel().add(card.getCardLabel());
+        }
+    }
 }

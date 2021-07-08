@@ -6,6 +6,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.util.Comparator;
 
 
 /**
@@ -72,7 +73,26 @@ public class Card implements Comparable<Card> // Interface
      */
     public int compareTo(Card c)
     {
-        return 0;
+        if(this.getValue() < c.getValue())
+        {
+            return -1; // Less than other one
+        }
+        else if(this.getValue() > c.getValue())
+        {
+            return 1;
+        }
+        else // If they are equal
+        {
+            if(this.getSuit().ordinal() < c.getSuit().ordinal()) // C is the other card, This is the class's card
+            {
+                return -1;
+            }
+            else if(this.getSuit().ordinal() > c.getSuit().ordinal())
+            {
+                return 1;
+            }
+        }
+        return 0; // Is equal
     }
 
 

@@ -161,7 +161,7 @@ public class FiveCardStudTest
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
-        winner = game.declareWinner();
+        winner = game.checkWinner();
 
         // Assert - Really ugly way to compare players
         assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
@@ -186,6 +186,31 @@ public class FiveCardStudTest
     }
 
     @Test
+    public void checkIncompleteHand() {
+        // neither player has any cards.
+
+        Player winner = game.checkWinner();
+
+        // check winner should be null
+        assertNull(winner);
+
+        // only one player has five cards, should still be null
+        game.getDealer().receiveCard(new Card(Suit.Clubs, 5, true, "5"), true);
+        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Clubs, 5, true, "5"), true);
+        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+
+
+        assertNull(game.checkWinner());
+
+        // player has a card, but only 1 card, so still no result;
+        game.getPlayer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+
+        assertNull(game.checkWinner());
+    }
+
+    @Test
     public void playerDeclaredWinnerWithDealerBustTest()
     {
         // Arrange
@@ -198,7 +223,7 @@ public class FiveCardStudTest
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
-        winner = game.declareWinner();
+        winner = game.checkWinner();
 
         // Assert - Really ugly way to compare players
         assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
@@ -209,73 +234,29 @@ public class FiveCardStudTest
     {
         // Arrange
         Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
+        game.getDealer().receiveCard(new Card(Suit.Clubs, 12, true, "King"), true);
+        game.getDealer().receiveCard(new Card(Suit.Hearts, 12, true, "King"), true);
+        game.getDealer().receiveCard(new Card(Suit.Diamonds, 12, true, "King"), true);
+        game.getDealer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
+        game.getDealer().receiveCard(new Card(Suit.Diamonds, 10, true, "10"), true);
 
         game.getPlayer().receiveCard(new Card(Suit.Diamonds, 5, true, "5"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
-
-        // Act
-        winner = game.declareWinner();
-
-        // Assert - Really ugly way to compare players
-        assertTrue(winner.getNameLabel().getText().equals(game.getDealer().getNameLabel().getText()));
-    }
-
-    @Test
-    public void playerBlackjackTest()
-    {
-        // Arrange
-        Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
-
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 11, true, "Ace"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Spades, 6, true, "6"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Clubs, 7, true, "7"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Clubs, 3, true, "3"), true);
+        game.getPlayer().receiveCard(new Card(Suit.Clubs, 9, true, "9"), true);
 
         // Act
         winner = game.checkWinner();
 
         // Assert - Really ugly way to compare players
-        assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
-    }
-
-    @Test
-    public void dealerBlackjackTest()
-    {
-        // Arrange
-        Player winner = null;
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 11, true, "Queen"), true);
-
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 10, true, "Ace"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
-
-        // Act
-        winner = game.checkWinner();
-
-        // Assert
         assertTrue(winner.getNameLabel().getText().equals(game.getDealer().getNameLabel().getText()));
     }
 
-    @Test
-    public void notABlackjackTest()
-    {
-        // Arrange
-        Player winner = game.getPlayer();
-        game.getDealer().receiveCard(new Card(Suit.Clubs, 10, true, "Queen"), true);
-        game.getDealer().receiveCard(new Card(Suit.Hearts, 10, true, "Queen"), true);
 
-        game.getPlayer().receiveCard(new Card(Suit.Diamonds, 10, true, "Ace"), true);
-        game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
-        // Act
-        winner = game.checkWinner();
 
-        // Assert
-        assertNull(winner);
-    }
+
 
     @Test
     public void awardPotIfPlayerWinsTest()

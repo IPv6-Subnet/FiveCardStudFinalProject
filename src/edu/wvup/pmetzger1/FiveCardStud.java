@@ -27,6 +27,8 @@ public class FiveCardStud implements ActionListener
     private JLabel statusLabel;
     private JTextField betInput;
     private JButton betButton;
+
+
     private JButton hitButton;
     private JButton stayButton;
 
@@ -36,6 +38,7 @@ public class FiveCardStud implements ActionListener
 
     private JButton playButton;
     private JButton endButton;
+    private JButton aboutButton;
 
     private GameState state;
 
@@ -207,11 +210,8 @@ public class FiveCardStud implements ActionListener
                 JOptionPane.showMessageDialog(frame, " Round ended in a tie.");
                 playAgain("Round ended in a tie. The pot has been refunded to the players.", "Round over");
             } else {
-                awardPotToWinner(winner);
-                alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
-                JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
-                playAgain("Round over", winner.getNameLabel().getText() + " has won");
-
+                updateLabels(winner);
+                return winner;
             }
         }
 
@@ -219,6 +219,8 @@ public class FiveCardStud implements ActionListener
        return null;
 
     }
+
+
 
     /**
      * Awards the pot to the winner of the round.
@@ -267,9 +269,13 @@ public class FiveCardStud implements ActionListener
         dealer.clearHand();
         dealer.resetDeck();
 
-        hitButton.setEnabled(false);
-        stayButton.setEnabled(false);
+        //hitButton.setEnabled(false);
+        //stayButton.setEnabled(false);
         betButton.setEnabled(true);
+
+        // --> These cause a bug to occur
+        //checkButton.setEnabled(false);
+        //foldButton.setEnabled(false);
 
         frame.repaint();
     }
@@ -339,12 +345,15 @@ public class FiveCardStud implements ActionListener
         }
 
      // Need way to inform user that your have folded
+        /*
     if(state == GameState.FOLD)
     {
         JOptionPane.showMessageDialog(frame, "Player has folded. Would you like to play again?", "Play again?", JOptionPane.INFORMATION_MESSAGE);
         quit();
     }
 
+
+         */
     }
 
 
@@ -427,7 +436,7 @@ public class FiveCardStud implements ActionListener
                 declareWinner();
             }
         }
-        else if(event.getSource() == hitButton && state == GameState.DRAW)
+        /*else if(event.getSource() == hitButton && state == GameState.DRAW)
         {
             playersTurn();
         }
@@ -435,6 +444,8 @@ public class FiveCardStud implements ActionListener
         {
             dealersTurn();
         }
+
+         */
         else if(event.getSource() == playButton)
         {
             startOver(); // Play button from dialog box
@@ -445,11 +456,15 @@ public class FiveCardStud implements ActionListener
         }
         else if(event.getSource() == checkButton)
         {
-            quit();
+            check();
         }
         else if(event.getSource() == foldButton)
         {
             fold();
+        }
+        else if(event.getSource() == aboutButton)
+        {
+            about();
         }
     }
 
@@ -466,7 +481,9 @@ public class FiveCardStud implements ActionListener
      * @return
      */
     public Player checkWinner() {
-
+        if(player.getHand().size() < 5 || dealer.getHand().size() < 5) {
+            return null;
+        }
         int plScore = player.scoreHand();
         int dlScore = dealer.scoreHand();
         if(plScore > dlScore) {
@@ -487,7 +504,7 @@ public class FiveCardStud implements ActionListener
      */
     private void makeFrame()
     {
-        frame = new JFrame("Don't Jack with Me!");
+        frame = new JFrame("5-card-Stud");
         makeMenuBar();
         Color backgroundColor = new Color(53, 101, 77);
 
@@ -576,12 +593,15 @@ public class FiveCardStud implements ActionListener
         // Take action event as variable, and then pass it in as parameter
         betButton.addActionListener(event -> actionPerformed(event));
         southPanel.add(betButton);
+        /*
         hitButton = new JButton("hit");
         hitButton.addActionListener(event -> actionPerformed(event));
         southPanel.add(hitButton);
         stayButton = new JButton("stay");
         stayButton.addActionListener(event -> actionPerformed(event));
         southPanel.add(stayButton);
+        //
+         */
 
         // NEW
         checkButton = new JButton("check");
@@ -631,7 +651,7 @@ public class FiveCardStud implements ActionListener
 
         JMenuItem aboutItem = new JMenuItem("About Blackjack");
         aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, SHORTCUT_MASK));
-        aboutItem.addActionListener(event -> quit()); // @@@ test @@@ --> Include dialog menu later about how it is played. use private method, observe joption pane for about menu [Rules]
+        aboutItem.addActionListener(event -> about()); // @@@ test @@@ --> Include dialog menu later about how it is played. use private method, observe joption pane for about menu [Rules]
         // Give a close. Joption cancel [observe]. Rules "How to play" --> title
         helpMenu.add(aboutItem);
 
@@ -666,6 +686,14 @@ public class FiveCardStud implements ActionListener
     private void quit()
     {
         System.exit(0);
+    }
+
+    /*
+        Explains how to play 5-card-stud
+     */
+    private void about()
+    {
+
     }
 
     /*
@@ -708,6 +736,9 @@ public class FiveCardStud implements ActionListener
         startOver();
     }
 
+    /*
+    Set's up a new game
+     */
     private void newGame()
     {
         player.setStash(500);
@@ -723,6 +754,10 @@ public class FiveCardStud implements ActionListener
         //frame.repaint();
         startOver();
     }
+
+    /*
+    Continue's the game
+     */
     private void continueGame() {
         // Return player or dealer, or nothing
         Player winner = null;// checkForBlackjack();
@@ -747,8 +782,11 @@ public class FiveCardStud implements ActionListener
      */
     private void check()
     {
-
-
+        if(state == GameState.START_GAME && pot != 0) {
+            playersTurn();
+            dealersTurn();
+            declareWinner();
+        }
     }
 
     /*
@@ -756,6 +794,7 @@ public class FiveCardStud implements ActionListener
      */
     private void fold() {
 
+        updateLabels(dealer);
         state = GameState.FOLD;
         alterStatusLabel("Player has just folded!");
         player.clearHand();
@@ -771,8 +810,6 @@ public class FiveCardStud implements ActionListener
         frame.repaint();
 
 
-        // I could simply not place question for user to play again. Just do it?
-        startOver();
 
 /*
         if(state == Gamestate.FOLD)
@@ -782,6 +819,14 @@ public class FiveCardStud implements ActionListener
         */
     }
 
-
+    /*
+    Update all of the Player's labels
+     */
+    private void updateLabels(Player winner) {
+        awardPotToWinner(winner);
+        alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
+        JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
+        playAgain("Round over", winner.getNameLabel().getText() + " has won");
+    }
 
 }

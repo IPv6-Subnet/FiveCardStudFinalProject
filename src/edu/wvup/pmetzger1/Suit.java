@@ -9,5 +9,5 @@ package edu.wvup.pmetzger1;
 public enum Suit
 {
     // Declare a value for Clubs, Diamonds, Hearts, and Spades
-    Clubs, Diamonds, Hearts, Spades
+    Diamonds, Clubs, Hearts, Spades
 }

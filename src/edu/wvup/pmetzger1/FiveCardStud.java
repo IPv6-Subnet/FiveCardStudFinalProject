@@ -14,7 +14,7 @@ import java.awt.event.KeyEvent;
  * @author [Preston Metzger]
  * @version [2021-06-27]
  */
-public class Blackjack implements ActionListener
+public class FiveCardStud implements ActionListener
 {
     // Fields
     private int bet;
@@ -47,7 +47,7 @@ public class Blackjack implements ActionListener
     /**
      * Creates a Blackjack instance with a player and dealer. @@@
      */
-    public Blackjack()
+    public FiveCardStud()
     {
         resetAll();
     }
@@ -229,6 +229,24 @@ public class Blackjack implements ActionListener
             return dealer;
         }
 
+        Player winner = declareWinner();
+        awardPotToWinner(winner);
+        if(winner == null)
+        {
+            alterStatusLabel("Round was a tie!");
+            JOptionPane.showMessageDialog(frame," Round ended in a tie.");
+            playAgain("Round ended in a tie. The pot has been refunded to the players.", "Round over");
+        }
+        else
+        {
+            alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
+            JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
+            playAgain("Round over", winner.getNameLabel().getText() + " has won");
+
+        }
+
+
+
 
         return null;
     }
@@ -366,7 +384,13 @@ public class Blackjack implements ActionListener
         dealer.receiveCard(dealer.deal(), true);
         frame.repaint(); // TEST @@@
 
+        state = GameState.START_GAME;
+     //   inProgress = true;
+        //continueGame();
 
+    }
+
+    private void continueGame() {
         // Return player or dealer, or nothing
         Player winner = checkForBlackjack();
         if(winner != null)
@@ -383,7 +407,6 @@ public class Blackjack implements ActionListener
             stayButton.setEnabled(true);
             betButton.setEnabled(false);
         }
-
     }
 
     /**
@@ -396,29 +419,6 @@ public class Blackjack implements ActionListener
         player.receiveCard(dealer.deal(), true);
         frame.repaint();
 
-        int handValue = player.scoreHand();
-        //int dealerValue =
-
-        if(handValue > 21)
-        {
-            awardPotToWinner(dealer);
-            playAgain("Would you like to play another round?", "Round Over");
-        }
-        /*(else if(handValue == 21)
-        {
-            awardPotToWinner(player);
-        }
-        */
-        //playAgain("Would you like to play another round?", "Round Over");
-
-
-        /*
-        Player winner = declareWinner();
-        if(winner != null)
-        {
-            awardPotToWinner(winner);
-        }
-        */
     }
 
     /**
@@ -427,7 +427,7 @@ public class Blackjack implements ActionListener
     // @@ Test @@
     public void dealersTurn()
     {
-        state = GameState.DEALER_TURN;
+        //state = GameState.DEALER_TURN;
         alterStatusLabel("Dealer Drawing Phase");
 
         dealer.showAllCards();
@@ -438,24 +438,6 @@ public class Blackjack implements ActionListener
             dealer.receiveCard(dealer.deal(), true);
             frame.repaint();
         }
-
-        Player winner = declareWinner();
-        awardPotToWinner(winner);
-        if(winner == null)
-        {
-            alterStatusLabel("Round was a tie!");
-            JOptionPane.showMessageDialog(frame," Round ended in a tie.");
-            playAgain("Round ended in a tie. The pot has been refunded to the players.", "Round over");
-        }
-        else
-        {
-            alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
-            JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
-            playAgain("Round over", winner.getNameLabel().getText() + " has won");
-
-        }
-
-
     }
 
     /**
@@ -475,15 +457,19 @@ public class Blackjack implements ActionListener
      */
     public void actionPerformed(ActionEvent event)
     {
-        if(event.getSource() == betButton && state == GameState.BETTING)
-        {
-            try{
-                takeBet(betInput.getText()); // Already parsed
-                startGame();
+        if(event.getSource() == betButton) {
+            if(state == GameState.BETTING) {
+                try {
+                    takeBet(betInput.getText()); // Already parsed
+                    startGame();
+                } catch (IllegalBetException e) {
+                    // Include modal at some point @@@@ TEST @@@@@  --> Menu buttons
+                    e.printStackTrace();
+                }
             }
-            catch(IllegalBetException e)
-            {
-                // Include modal at some point @@@@ TEST @@@@@  --> Menu buttons
+            else if(state == GameState.START_GAME) {
+                playersTurn();
+                dealersTurn();
             }
         }
         else if(event.getSource() == hitButton && state == GameState.DRAW)
@@ -724,7 +710,7 @@ public class Blackjack implements ActionListener
 
 
        //frame.removeAll();
-       makeFrame();
+        makeFrame();
         //frame.repaint();
         startOver();
     }

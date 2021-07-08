@@ -17,14 +17,14 @@ import static org.junit.Assert.*;
  * @author  (your name)
  * @version (a version number or a date)
  */
-public class BlackjackTest
+public class FiveCardStudTest
 {
-    Blackjack game;
+    FiveCardStud game;
 
     /**
      * Default constructor for test class BlackjackGUITest
      */
-    public BlackjackTest()
+    public FiveCardStudTest()
     {
     }
 
@@ -36,7 +36,7 @@ public class BlackjackTest
     @Before
     public void setUp()
     {
-        game = new Blackjack();
+        game = new FiveCardStud();
     }
 
     /**
@@ -101,14 +101,14 @@ public class BlackjackTest
         int boxLayoutCount = 0;
         int gridLayoutCount = 0;
 
-        ArrayList<JPanel> components = new ArrayList<>();
+        ArrayList<JComponent> components = new ArrayList<>();
         for (int i = 0; i < game.getFrame().getContentPane().getComponentCount(); i++)
         {
-            components.add((JPanel)game.getFrame().getContentPane().getComponent(i));
+            components.add((JComponent) game.getFrame().getContentPane().getComponent(i));
         }
 
         // Act
-        for (JPanel panel : components)
+        for (JComponent panel : components)
         {
             if (panel.getLayout() instanceof FlowLayout)
             {

@@ -30,6 +30,10 @@ public class FiveCardStud implements ActionListener
     private JButton hitButton;
     private JButton stayButton;
 
+    //New
+    private JButton checkButton;
+    private JButton foldButton;
+
     private JButton playButton;
     private JButton endButton;
 
@@ -187,68 +191,33 @@ public class FiveCardStud implements ActionListener
         }
     }
 
-    /**
-     * Checks to see if the player or dealer has obtained a Blackjack
-     */
-    public Player checkForBlackjack()
-    {
-        if(player.getHand().size() == 2 && player.scoreHand() == 21)
-        {
-            return player;
-        }
-        else if(dealer.getHand().size() == 2 && dealer.scoreHand() == 21)
-        {
-            dealer.showAllCards();
-            frame.repaint(); // Test
-            return dealer; // TEST
-        }
-        return null;
-    }
+
 
     /**
      * Declare the winner for this round.
      */
     public Player declareWinner()
     {
-        // Checks to see if either player busts
-        if(player.scoreHand() > 21)
-        {
-            return dealer;
-        }
-        else if(dealer.scoreHand() > 21)
-        {
-            return player;
-        }
+        if(player.getHand().size() == 5 && dealer.getHand().size() == 5) {
 
-        if(player.scoreHand() > dealer.scoreHand())
-        {
-            return player;
-        }
-        else if(dealer.scoreHand() > player.scoreHand())
-        {
-            return dealer;
-        }
+            Player winner = checkWinner();
+            state = GameState.ENDED;
+            if (winner == null) {
+                alterStatusLabel("Round was a tie!");
+                JOptionPane.showMessageDialog(frame, " Round ended in a tie.");
+                playAgain("Round ended in a tie. The pot has been refunded to the players.", "Round over");
+            } else {
+                awardPotToWinner(winner);
+                alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
+                JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
+                playAgain("Round over", winner.getNameLabel().getText() + " has won");
 
-        Player winner = declareWinner();
-        awardPotToWinner(winner);
-        if(winner == null)
-        {
-            alterStatusLabel("Round was a tie!");
-            JOptionPane.showMessageDialog(frame," Round ended in a tie.");
-            playAgain("Round ended in a tie. The pot has been refunded to the players.", "Round over");
-        }
-        else
-        {
-            alterStatusLabel(winner.getNameLabel().getText() + " has won this round!");
-            JOptionPane.showMessageDialog(frame, winner.getNameLabel().getText() + " has won this round!");
-            playAgain("Round over", winner.getNameLabel().getText() + " has won");
-
+            }
         }
 
 
+       return null;
 
-
-        return null;
     }
 
     /**
@@ -369,6 +338,13 @@ public class FiveCardStud implements ActionListener
             quit();
         }
 
+     // Need way to inform user that your have folded
+    if(state == GameState.FOLD)
+    {
+        JOptionPane.showMessageDialog(frame, "Player has folded. Would you like to play again?", "Play again?", JOptionPane.INFORMATION_MESSAGE);
+        quit();
+    }
+
     }
 
 
@@ -390,24 +366,7 @@ public class FiveCardStud implements ActionListener
 
     }
 
-    private void continueGame() {
-        // Return player or dealer, or nothing
-        Player winner = checkForBlackjack();
-        if(winner != null)
-        {
-            // Can be player or dealer
-            awardPotToWinner(winner);
-            alterStatusLabel("Natural Blackjack!!");
-            JOptionPane.showMessageDialog(frame, "Natural Blackjack!!");
-            playAgain("Round over", winner.getNameLabel().getText() + " has won");
-        }
-        else
-        {
-            hitButton.setEnabled(true);
-            stayButton.setEnabled(true);
-            betButton.setEnabled(false);
-        }
-    }
+
 
     /**
      * The player's turn. During a turn, the player will receive a card
@@ -430,14 +389,9 @@ public class FiveCardStud implements ActionListener
         //state = GameState.DEALER_TURN;
         alterStatusLabel("Dealer Drawing Phase");
 
-        dealer.showAllCards();
+        dealer.receiveCard(dealer.deal(), true);
         frame.repaint();
 
-        while(dealer.scoreHand() < 17)
-        {
-            dealer.receiveCard(dealer.deal(), true);
-            frame.repaint();
-        }
     }
 
     /**
@@ -470,6 +424,7 @@ public class FiveCardStud implements ActionListener
             else if(state == GameState.START_GAME) {
                 playersTurn();
                 dealersTurn();
+                declareWinner();
             }
         }
         else if(event.getSource() == hitButton && state == GameState.DRAW)
@@ -488,6 +443,14 @@ public class FiveCardStud implements ActionListener
         {
             quit();
         }
+        else if(event.getSource() == checkButton)
+        {
+            quit();
+        }
+        else if(event.getSource() == foldButton)
+        {
+            fold();
+        }
     }
 
     /**
@@ -497,6 +460,27 @@ public class FiveCardStud implements ActionListener
     {
         frame.dispose();
     }
+
+    /**
+     * Check the winner for the given round of 5-card-stud.
+     * @return
+     */
+    public Player checkWinner() {
+
+        int plScore = player.scoreHand();
+        int dlScore = dealer.scoreHand();
+        if(plScore > dlScore) {
+            return player;
+        }
+        if(dlScore > plScore) {
+            return dealer;
+        }
+
+        return null;
+    }
+
+
+
 
     /**
      * Create the Swing frame and its content.
@@ -598,6 +582,15 @@ public class FiveCardStud implements ActionListener
         stayButton = new JButton("stay");
         stayButton.addActionListener(event -> actionPerformed(event));
         southPanel.add(stayButton);
+
+        // NEW
+        checkButton = new JButton("check");
+        checkButton.addActionListener(event -> actionPerformed(event));
+        southPanel.add(checkButton);
+
+        foldButton = new JButton("fold");
+        foldButton.addActionListener(event -> actionPerformed(event));
+        southPanel.add(foldButton);
 
         contentPane.add(southPanel,BorderLayout.SOUTH);
 
@@ -729,6 +722,64 @@ public class FiveCardStud implements ActionListener
 
         //frame.repaint();
         startOver();
+    }
+    private void continueGame() {
+        // Return player or dealer, or nothing
+        Player winner = null;// checkForBlackjack();
+        if(winner != null)
+        {
+            // Can be player or dealer
+            awardPotToWinner(winner);
+            alterStatusLabel("Natural Blackjack!!");
+            JOptionPane.showMessageDialog(frame, "Natural Blackjack!!");
+            playAgain("Round over", winner.getNameLabel().getText() + " has won");
+        }
+        else
+        {
+            hitButton.setEnabled(true);
+            stayButton.setEnabled(true);
+            betButton.setEnabled(false);
+        }
+    }
+
+    /*
+        Applies a check, where action will be passed to next player
+     */
+    private void check()
+    {
+
+
+    }
+
+    /*
+        Fold, where use will forfeit their hand for this round
+     */
+    private void fold() {
+
+        state = GameState.FOLD;
+        alterStatusLabel("Player has just folded!");
+        player.clearHand();
+        dealer.clearHand();
+        dealer.resetDeck();
+
+        hitButton.setEnabled(false);
+        stayButton.setEnabled(false);
+        foldButton.setEnabled(false);
+        checkButton.setEnabled(false);
+        betButton.setEnabled(true);
+
+        frame.repaint();
+
+
+        // I could simply not place question for user to play again. Just do it?
+        startOver();
+
+/*
+        if(state == Gamestate.FOLD)
+        {
+            JOptionPane.showMessageDialog(frame, "Player has folded. Would you like to play again?", "Play again?", JOptionPane.INFORMATION_MESSAGE);
+        }
+        */
     }
 
 

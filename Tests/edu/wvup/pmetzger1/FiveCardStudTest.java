@@ -235,7 +235,7 @@ public class FiveCardStudTest
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
-        winner = game.checkForBlackjack();
+        winner = game.checkWinner();
 
         // Assert - Really ugly way to compare players
         assertTrue(winner.getNameLabel().getText().equals(game.getPlayer().getNameLabel().getText()));
@@ -253,7 +253,7 @@ public class FiveCardStudTest
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
-        winner = game.checkForBlackjack();
+        winner = game.checkWinner();
 
         // Assert
         assertTrue(winner.getNameLabel().getText().equals(game.getDealer().getNameLabel().getText()));
@@ -271,7 +271,7 @@ public class FiveCardStudTest
         game.getPlayer().receiveCard(new Card(Suit.Spades, 10, true, "Queen"), true);
 
         // Act
-        winner = game.checkForBlackjack();
+        winner = game.checkWinner();
 
         // Assert
         assertNull(winner);

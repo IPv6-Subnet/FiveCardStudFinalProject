@@ -36,7 +36,7 @@ public class FiveCardStud implements ActionListener
     private JButton checkButton;
     private JButton foldButton;
 
-    private JMenu helpMenu;
+    private JMenu ruleMenu;
 
     private JButton playButton;
     private JButton endButton;
@@ -657,15 +657,17 @@ public class FiveCardStud implements ActionListener
         quitGameItem.addActionListener(event -> quit()); //
         fileMenu.add(quitGameItem);
 
-        helpMenu = new JMenu("Help");
+        ruleMenu = new JMenu("Rules");
 
         // https://www.youtube.com/watch?v=tymnXOm8lV4
         JMenu aboutMenu= new JMenu();
         JTextArea textArea = new JTextArea();
         textArea.setText("The game of 5-card-stud will be played with a Dealer and Player\n"
+
                 + "The player will set an initial bet called the Ante. Which must be met by the dealer\n"
-                + "During each round, The player can choose to bet more money, hold their action, or fold and give up the round\n"
-                + "On the 5th round, the dealer will reveal their face down card, and the hands will be scored.\n"
+                + "Each player will be given 2 cards, with one of the dealers cards facing down.\n"
+                + "During each round, the player can choose to bet more money, hold their action, or fold and give up the round\n"
+                + "On the 5th round, the dealer will reveal their face down card. Hands are scored based on poker hand rankings.\n"
                 + "The player with the highest score will win the pot."
 
 
@@ -683,24 +685,24 @@ public class FiveCardStud implements ActionListener
         textArea.setEditable(false);
 
 
-        helpMenu.add(textArea);
+        ruleMenu.add(textArea);
         frame.setVisible(true);
-        helpMenu.setVisible(true);
+        ruleMenu.setVisible(true);
 
         menuBar.add(fileMenu);
-        menuBar.add(helpMenu);
+        menuBar.add(ruleMenu);
         frame.setJMenuBar(menuBar);
 
         menuBar.setBackground(backgroundColor); // Review
         fileMenu.setBackground(backgroundColor);
-        helpMenu.setBackground(backgroundColor);
+        ruleMenu.setBackground(backgroundColor);
 
         newGameItem.setBackground(backgroundColor);
         quitGameItem.setBackground(backgroundColor);
 
         menuBar.setForeground(foregroundColor);
         fileMenu.setForeground(foregroundColor);
-        helpMenu.setForeground(foregroundColor);
+        ruleMenu.setForeground(foregroundColor);
 
         newGameItem.setForeground(foregroundColor);
         quitGameItem.setForeground(foregroundColor);

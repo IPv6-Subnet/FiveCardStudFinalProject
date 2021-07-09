@@ -664,8 +664,9 @@ public class FiveCardStud implements ActionListener
         JTextArea textArea = new JTextArea();
         textArea.setText("The game of 5-card-stud will be played with a Dealer and Player\n"
                 + "The player will set an initial bet called the Ante. Which must be met by the dealer\n"
-                + "The player can choose to bet more money, hold their action, or fold and give up the round\n"
-                + "A player will win the round based upon the score of their hand."
+                + "During each round, The player can choose to bet more money, hold their action, or fold and give up the round\n"
+                + "On the 5th round, the dealer will reveal their face down card, and the hands will be scored.\n"
+                + "The player with the highest score will win the pot."
 
 
         );

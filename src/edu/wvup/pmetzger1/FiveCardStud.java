@@ -36,6 +36,8 @@ public class FiveCardStud implements ActionListener
     private JButton checkButton;
     private JButton foldButton;
 
+    private JMenu helpMenu;
+
     private JButton playButton;
     private JButton endButton;
     private JButton aboutButton;
@@ -44,6 +46,7 @@ public class FiveCardStud implements ActionListener
 
     private JMenuBar menuBar;
     public static final Color foregroundColor = new Color(240, 240, 240); // All caps?
+    public static final Color foregroundColor2 = new Color(0, 0, 0);
     public static final Font fontSize = new Font("Calibri", Font.BOLD, 24);
     // https://stackoverflow.com/questions/24278648/how-to-change-font-in-java-gui-application
 
@@ -472,10 +475,7 @@ public class FiveCardStud implements ActionListener
         {
             fold();
         }
-        else if(event.getSource() == aboutButton)
-        {
-            about();
-        }
+
     }
 
     /**
@@ -657,18 +657,38 @@ public class FiveCardStud implements ActionListener
         quitGameItem.addActionListener(event -> quit()); //
         fileMenu.add(quitGameItem);
 
-        JMenu helpMenu = new JMenu("Help");
+        helpMenu = new JMenu("Help");
 
-        JMenuItem aboutItem = new JMenuItem("About Blackjack");
-        aboutItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, SHORTCUT_MASK));
-        aboutItem.addActionListener(event -> about()); // @@@ test @@@ --> Include dialog menu later about how it is played. use private method, observe joption pane for about menu [Rules]
-        // Give a close. Joption cancel [observe]. Rules "How to play" --> title
-        helpMenu.add(aboutItem);
+        // https://www.youtube.com/watch?v=tymnXOm8lV4
+        JMenu aboutMenu= new JMenu();
+        JTextArea textArea = new JTextArea();
+        textArea.setText("The game of 5-card-stud will be played with a Dealer and Player\n"
+                + "The player will set an initial bet called the Ante. Which must be met by the dealer\n"
+                + "The player can choose to bet more money, hold their action, or fold and give up the round\n"
+                + "A player will win the round based upon the score of their hand."
+
+
+        );
+
+        textArea.setBounds(50, 50, 500, 300);
+        textArea.setLineWrap(true);
+        textArea.setWrapStyleWord(true);
+        textArea.setBackground(new Color(200,200,200));
+        textArea.setBorder(BorderFactory.createBevelBorder(1));
+        textArea.setForeground(new Color(0, 0, 0));
+        textArea.setFont(new Font("Comic Sans", Font.ITALIC, 12));
+
+        // Disable editable options
+        textArea.setEditable(false);
+
+
+        helpMenu.add(textArea);
+        frame.setVisible(true);
+        helpMenu.setVisible(true);
 
         menuBar.add(fileMenu);
         menuBar.add(helpMenu);
         frame.setJMenuBar(menuBar);
-
 
         menuBar.setBackground(backgroundColor); // Review
         fileMenu.setBackground(backgroundColor);
@@ -676,7 +696,6 @@ public class FiveCardStud implements ActionListener
 
         newGameItem.setBackground(backgroundColor);
         quitGameItem.setBackground(backgroundColor);
-        aboutItem.setBackground(backgroundColor);
 
         menuBar.setForeground(foregroundColor);
         fileMenu.setForeground(foregroundColor);
@@ -684,9 +703,6 @@ public class FiveCardStud implements ActionListener
 
         newGameItem.setForeground(foregroundColor);
         quitGameItem.setForeground(foregroundColor);
-        aboutItem.setForeground(foregroundColor);
-
-
     }
 
 
@@ -698,13 +714,6 @@ public class FiveCardStud implements ActionListener
         System.exit(0);
     }
 
-    /*
-        Explains how to play 5-card-stud
-     */
-    private void about()
-    {
-
-    }
 
     /*
      * Set formated text (part)
